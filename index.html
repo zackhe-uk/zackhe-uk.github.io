@@ -1,9 +1,113 @@
 <!doctype HTML>
 <html>
   <head>
-    <title>zackhe.uk</title>
+    <title>
+      zackhe.uk
+    </title>
+    <style>
+      html, body {
+        overflow: hidden;
+        height: 100%;
+      }
+      
+      .titleCont {
+        display: block;
+        width: 100%;
+        height: 100%;
+        align-content: center;
+        text-align: center;
+      }
+      .title {
+        font-size: 300%;
+        display: block;
+        transform: translateY(-50%);
+        animation-duration: 100ms;
+        animation-name: title-anim;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+      }
+      #titleDesc {
+        display: block;
+        animation-duration: 1s;
+        animation-name: tdesc-anim;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
+        animation-timing-function: ease-in-out;
+      }
+      @keyframes title-anim {
+        from {
+          font-weight: 700;
+          scale: 100% 1;
+        }
+      
+        to {
+          font-weight: 900;
+          scale: 96% 1;
+        }
+      }
+      @keyframes tdesc-anim {
+        0% {
+          rotate: -5deg;
+          scale: 110%;
+        }
+      
+        50% {
+          rotate:  5deg;
+        }
+
+        100% {
+          rotate: -5deg;
+          scale: 100%;
+        }
+      }
+      
+      
+      .banner {
+        display: block;
+        background: red;
+        width: 100%;
+        padding: 16px 0px;
+        color: white;
+        align-content: center;
+        white-space: nowrap;
+        
+      }
+      .scrollingText {
+        display: inline-block;
+        transform: translateY(-50%);
+      }
+      
+    </style>
+    <script>
+      addEventListener("load", () => {
+        window.item0 = 0;
+        window.item1 = 0;
+        document.getElementById("item1").innerHTML = document.getElementById("item0").innerHTML;
+        document.getElementById("item0").style.position = "absolute";
+        document.getElementById("item1").style.position = "absolute";
+        setInterval(function() {
+          window.item0BCR = document.getElementById("item0").getBoundingClientRect();
+          document.getElementById("item0").style.right = `${
+            item0
+          }px`;
+          document.getElementById("item1").style.right = `${
+            item1
+          }px`;
+          item0+= 0.5;
+          item0 = item0 % Math.max(innerWidth, item0BCR.width);
+          item1 = item0 - Math.max(innerWidth, item0BCR.width);
+        }, 1);
+      });;
+    </script>
   </head>
+  <div class="banner">
+    <span class="scrollingText" id="item0">Zack: "i havent studied at all" || "ur all cooked" says Russian dictator || "Thanks for your support!" Guy finally thanks people for their support || South Sudanians found disposing their faeces by mail || Scrolling text finally implemented on zackhe.uk, but nobody cares || New McDonalds cheeseburger just launched: the McDoodlydoodumdadeedoodumb || "Nacho Cheese" flavoured Doritos banned in Uzbekistan due to health & safety concerns || cows milk tastes better then ever, farmers complain in anger || Gordon Freeman no longer free || Job rates lower then ever || When the hell is this scrolling text going to end it's been going on forever || New radio station launches 3 more new radio stations || Pineapple on pizza declared illegal in Italy, EU follows suit || Guess what just happened? || Mercedes-Benz involved in 80 million USD class-action lawsuit for no reason whatsoever || "RED spy in base!" reports BLU soldier  || <b>WHY EVEN ARE YOU HERE</b> || British person said this website is not British, prosecuted || Markus Zusak's "the book thief" now on shelves || &#8203;</span>
+    <span class="scrollingText" id="item1"></span>
+  </div>
   <body>
-    <b>Hello interndet!</b> This website is a website in progress :)<br>
+    <div class="titleCont">
+      <span class="title">zackhe.uk</span><br>
+      <span id="titleDesc"><b>Hello interndet!</b> This website is a website in progress :)</span>
+    </div>
   </body>
 </html>
