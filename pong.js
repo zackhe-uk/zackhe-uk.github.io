@@ -116,7 +116,7 @@ let ballGap      = 0; // set to height/3 in setup
 let ballMaxYS    = 4;
 let ballMaxXS    = 8;
 // --> HTML extras
-let ready = false;
+let gameReady = false;
 // variables
 let ball       = {
 	"x": 0,
