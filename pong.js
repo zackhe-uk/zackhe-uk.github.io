@@ -115,6 +115,8 @@ let ballSize     = paddleStroke;
 let ballGap      = 0; // set to height/3 in setup
 let ballMaxYS    = 4;
 let ballMaxXS    = 8;
+// --> HTML extras
+let ready = false;
 // variables
 let ball       = {
 	"x": 0,
@@ -142,7 +144,8 @@ function setup() {
 	createCanvas(thumb ? windowHeight : (windowHeight/3*4), windowHeight);
 	background(100);
 	// most of the below is directly copied and pasted from the MDN web docs page for OscillatorNode
-	
+}
+function realsetup() {
 	// create web audio api context
 	window.audioCtx = new AudioContext();
 
@@ -172,6 +175,8 @@ function setup() {
 	paddles[1].y = (height/2) - paddleHeight;
 	
 	reconfigBall();
+
+	gameReady = true;
 }
 
 function blip(osctype, oscfreq, time) {
@@ -207,7 +212,11 @@ function pongBlip(bliptype) {
 			break
 	}
 }
+addEventListener("click", (e) => {
+	if(!gameReady) realsetup();
+});
 addEventListener("keydown", (e) => {
+	if(!gameReady) return;
 	if(e.key == 'ArrowUp') {
 		paddles[1].active = -1;
 	}
@@ -223,6 +232,7 @@ addEventListener("keydown", (e) => {
 });
 
 addEventListener("keyup", (e) => {
+	if(!gameReady) return;
 	if(e.key == 'ArrowUp') {
 		paddles[1].active =  0;
 	}
@@ -293,6 +303,7 @@ function logic() {
 }
 
 function draw() {
+	if(!gameReady) return;
 	logic();
 	
 	background(0);
