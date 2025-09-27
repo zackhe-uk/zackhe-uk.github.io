@@ -146,6 +146,11 @@ function setup() {
 	// most of the below is directly copied and pasted from the MDN web docs page for OscillatorNode
 }
 function realsetup() {
+	document.getElementById("defaultCanvas0").requestFullscreen();
+	setTimeout(() => {
+		// wait 300ms for fullscreen to finish fullscreening
+		document.getElementById("defaultCanvas0").requestPointerLock();
+	}, 300);
 	// create web audio api context
 	window.audioCtx = new AudioContext();
 
