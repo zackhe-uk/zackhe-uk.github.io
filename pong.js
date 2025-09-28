@@ -148,11 +148,6 @@ function setup() {
 	// most of the below is directly copied and pasted from the MDN web docs page for OscillatorNode
 }
 function realsetup() {
-	document.getElementById("defaultCanvas0").requestFullscreen();
-	setTimeout(() => {
-		// wait 300ms for fullscreen to finish fullscreening
-		document.getElementById("defaultCanvas0").requestPointerLock();
-	}, 300);
 	// create web audio api context
 	window.audioCtx = new AudioContext();
 
@@ -220,6 +215,11 @@ function pongBlip(bliptype) {
 	}
 }
 addEventListener("click", (e) => {
+	document.getElementById("defaultCanvas0").requestFullscreen();
+	setTimeout(() => {
+		// wait 300ms for fullscreen to finish fullscreening
+		document.getElementById("defaultCanvas0").requestPointerLock();
+	}, 300);
 	if(!gameReady) realsetup();
 });
 addEventListener("keydown", (e) => {
@@ -311,6 +311,12 @@ function logic() {
 
 function draw() {
 	if(!gameReady) return;
+	// HTML5 HACKS
+	if(document.fullscreenElement == null) {
+		gain.gain.linearRampToValueAtTime(-1, audioCtx.currentTime);
+		return; // save some processing power
+	}
+	// END HTML5
 	logic();
 	
 	background(0);
