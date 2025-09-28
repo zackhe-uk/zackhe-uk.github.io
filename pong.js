@@ -3,7 +3,7 @@
 // config
 // --> dev
 let thumb = false;
-let fakeTs = false;
+let fakeTs = true;
 // --> score
 let scoreScale = 10;
 let scoreGap   = 0; // defined in setup
@@ -118,8 +118,19 @@ let ballFirstYS  = 4;
 let ballFirstXS  = 8;
 let ballMaxYS    = 4;
 let ballMaxXS    = 8;
+// --> ai player (touchscreen only)
+let pballYs = [];
+let maxpbYs = 10;
 // --> HTML extras
 let gameReady = false;
+// --> helpers
+function isTouchScreen() {
+	return window.matchMedia("(pointer: coarse)").matches || fakeTs;
+}
+function isHTML5() {
+	return window.location.href.includes("zackhe.uk");
+}
+// end helpers
 // variables
 let ball       = {
 	"x": 0,
@@ -146,6 +157,8 @@ let paddles    = [ {
 function setup() {
 	createCanvas(thumb ? Math.min(1080, windowHeight) : (Math.min(1080, windowHeight)/3*4), Math.min(1080, windowHeight));
 	background(100);
+	
+	if(!isHTML5()) realsetup();
 }
 function realsetup() {
 	// most of the below is directly copied and pasted from the MDN web docs page for OscillatorNode
@@ -198,6 +211,8 @@ function reconfigBall() {
 	ball.xs      = ballFirstXS;
 	ball.ys      = (ball.y == ballGap) ? ballFirstYS : -ballFirstYS;
 	ball.sm      = 1;
+	
+	pballYs = [ball.y];
 }
 function pongBlip(bliptype) {
 	// https://stelioskanitsakis.medium.com/an-audio-comparison-between-the-sounds-of-ataris-pong-and-the-silence-of-magnavox-odyssey-s-83e6fac56653
@@ -216,19 +231,19 @@ function pongBlip(bliptype) {
 			break
 	}
 }
-function isTouchScreen() {
-	return window.matchMedia("(pointer: coarse)").matches || fakeTs;
+
+if(isHTML5()) {
+	addEventListener("click", (e) => {
+		document.getElementById("defaultCanvas0").requestFullscreen();
+		if(!isTouchScreen()) {
+			setTimeout(() => {
+				// wait 300ms for fullscreen to finish fullscreening
+				document.getElementById("defaultCanvas0").requestPointerLock();
+			}, 300);
+		}
+		if(!gameReady) realsetup();
+	});
 }
-addEventListener("click", (e) => {
-	document.getElementById("defaultCanvas0").requestFullscreen();
-	if(!isTouchScreen()) {
-		setTimeout(() => {
-			// wait 300ms for fullscreen to finish fullscreening
-			document.getElementById("defaultCanvas0").requestPointerLock();
-		}, 300);
-	}
-	if(!gameReady) realsetup();
-});
 addEventListener("keydown", (e) => {
 	if((!gameReady) || isTouchScreen()) return;
 	if(e.key == 'ArrowUp') {
@@ -264,14 +279,16 @@ addEventListener("keyup", (e) => {
 function logic() {
 	// extra mobile/touchscreen input detection, also leave paddle 2 to ai in this case
 	if (isTouchScreen()) {
-		if(Math.abs(paddles[0].y - mouseY) < paddleSpeed) {
-			paddles[0].active = (paddles[0].y - mouseY < 0) ? -1 : 1;
+		if(Math.abs(mouseY - paddles[0].y) >= paddleSpeed) {
+			paddles[0].active = (mouseY - paddles[0].y < 0) ? -1 : 1;
 		} else {
+			paddles[0].y = mouseY;
 			paddles[0].active = 0;
 		}
-		if(Math.abs(paddles[1].y - ball.y) < paddleSpeed) {
-			paddles[1].active = (paddles[1].y - ball.y < 0) ? -1 : 1;
+		if(Math.abs(pballYs[0] - paddles[1].y) >= paddleSpeed) {
+			paddles[1].active = (pballYs[0] - paddles[1].y < 0) ? -1 : 1;
 		} else {
+			paddles[1].y = pballYs[0];
 			paddles[1].active = 0;
 		}
 	}
@@ -334,12 +351,17 @@ function logic() {
 function draw() {
 	if(!gameReady) return;
 	// HTML5 HACKS
-	if(document.fullscreenElement == null) {
+	if(document.fullscreenElement == null && isHTML5()) {
 		gain.gain.linearRampToValueAtTime(-1, audioCtx.currentTime);
 		return; // save some processing power
 	}
 	// END HTML5
 	logic();
+	
+	pballYs.unshift(ball.y);
+	if(pballYs.length > maxpbYs) {
+		pballYs.pop();
+	}
 	
 	background(0);
 	stroke(255);
