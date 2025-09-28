@@ -113,6 +113,8 @@ let paddleStroke = 10;
 // --> ball
 let ballSize     = paddleStroke;
 let ballGap      = 0; // set to height/3 in setup
+let ballFirstYS  = 4;
+let ballFirstXS  = 8;
 let ballMaxYS    = 4;
 let ballMaxXS    = 8;
 // --> HTML extras
@@ -196,8 +198,8 @@ function reconfigBall() {
 	ball.exists  = true;
 	ball.x       = width/2;
 	ball.y 			 = (Math.random() < 0.5) ? ballGap : height - ballGap; // ??? emulating weird pong quirk?
-	ball.xs      = ballMaxXS;
-	ball.ys      = (ball.y == ballGap) ? ballMaxYS : -ballMaxYS;
+	ball.xs      = ballFirstXS;
+	ball.ys      = (ball.y == ballGap) ? ballFirstYS : -ballFirstYS;
 	ball.sm      = 1;
 }
 function pongBlip(bliptype) {
@@ -333,8 +335,8 @@ function draw() {
 		for(let pnum = 0; pnum < pFNIO.length; pnum++) {
 			for(let i = 0; i < 8; i++) {
 				for(let j = 0; j < 4; j++) {
-					if(font[pFNIO[pnum] % font.length][i][j] == 1) {
-						rect(Math.floor(paddle.l ? (width / 2 - scoreGap) : (width / 2 + scoreGap)) + ((j + (pnum * 5)) * scoreScale), scoreGapY + (i * scoreScale), scoreScale, scoreScale);
+					if(font[pFNIO[pFNIO.length-(pnum + 1)] % font.length][i][j] == 1) {
+						rect(Math.floor(paddle.l ? (width / 2 - scoreGap) : (width / 2 + scoreGap)) + ((j + (-pnum * 5)) * scoreScale), scoreGapY + (i * scoreScale), scoreScale, scoreScale);
 					}
 				}
 			}
