@@ -21,6 +21,8 @@
 // --> dev
 let thumb = false;
 let fakeTs = false; // ensure to disable fakeTs in production versions
+// --> misc
+window.oscTimeout = -1;
 // --> score
 let scoreScale = 10;
 let scoreGap   = 0; // defined in setup
@@ -217,7 +219,10 @@ function blip(osctype, oscfreq, time) {
 	oscillator.type = osctype;
 	oscillator.frequency.value = oscfreq;
 	gain.gain.linearRampToValueAtTime(-0.9, audioCtx.currentTime);
-	setTimeout(() => {
+	if(window.oscTimeout != -1 || typeof window.oscTimeout === 'undefined') {
+		clearTimeout(window.oscTimeout);
+	}
+	window.oscTimeout = setTimeout(() => {
 		gain.gain.linearRampToValueAtTime(-1, audioCtx.currentTime);
 	}, time);
 }
