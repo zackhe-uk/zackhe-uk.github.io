@@ -143,11 +143,12 @@ let paddles    = [ {
 }, ];
 
 function setup() {
-	createCanvas(thumb ? windowHeight : (windowHeight/3*4), windowHeight);
+	createCanvas(thumb ? Math.min(1080, windowHeight) : (Math.min(1080, windowHeight)/3*4), Math.min(1080, windowHeight));
 	background(100);
-	// most of the below is directly copied and pasted from the MDN web docs page for OscillatorNode
 }
 function realsetup() {
+	// most of the below is directly copied and pasted from the MDN web docs page for OscillatorNode
+	
 	// create web audio api context
 	window.audioCtx = new AudioContext();
 
@@ -214,6 +215,9 @@ function pongBlip(bliptype) {
 			break
 	}
 }
+function isTouchScreen() {
+	return window.matchMedia("(pointer: coarse)").matches;
+}
 addEventListener("click", (e) => {
 	document.getElementById("defaultCanvas0").requestFullscreen();
 	setTimeout(() => {
@@ -223,7 +227,7 @@ addEventListener("click", (e) => {
 	if(!gameReady) realsetup();
 });
 addEventListener("keydown", (e) => {
-	if(!gameReady) return;
+	if((!gameReady) || isTouchscreen()) return;
 	if(e.key == 'ArrowUp') {
 		paddles[1].active = -1;
 	}
@@ -239,7 +243,7 @@ addEventListener("keydown", (e) => {
 });
 
 addEventListener("keyup", (e) => {
-	if(!gameReady) return;
+	if((!gameReady) || isTouchscreen()) return;
 	if(e.key == 'ArrowUp') {
 		paddles[1].active =  0;
 	}
@@ -255,6 +259,17 @@ addEventListener("keyup", (e) => {
 })
 
 function logic() {
+	// extra mobile/touchscreen input detection, also leave paddle 2 to ai in this case
+	if (isTouchscreen()) {
+		if(Math.abs(paddles[0].y - mouseY) < 10) {
+			paddles[0].active = (paddles[0].y - mouseY < 0) ? -1 : 1;
+		}
+		if(Math.abs(paddles[1].y - ball.y) < 10) {
+			paddles[1].active = (paddles[1].y - ball.y < 0) ? -1 : 1;
+		}
+	}
+
+	
 	ball.x += ball.xs * ball.sm;
 	ball.y += ball.ys * ball.sm;
 	for(let paddle of paddles) {
