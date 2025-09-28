@@ -3,7 +3,7 @@
 // config
 // --> dev
 let thumb = false;
-//let fakeTs = false;
+let fakeTs = false;
 // --> score
 let scoreScale = 10;
 let scoreGap   = 0; // defined in setup
@@ -217,7 +217,7 @@ function pongBlip(bliptype) {
 	}
 }
 function isTouchScreen() {
-	return window.matchMedia("(pointer: coarse)").matches || window.fakeTs;
+	return window.matchMedia("(pointer: coarse)").matches || fakeTs;
 }
 addEventListener("click", (e) => {
 	document.getElementById("defaultCanvas0").requestFullscreen();
@@ -228,7 +228,7 @@ addEventListener("click", (e) => {
 	if(!gameReady) realsetup();
 });
 addEventListener("keydown", (e) => {
-	if((!gameReady) || isTouchscreen()) return;
+	if((!gameReady) || isTouchScreen()) return;
 	if(e.key == 'ArrowUp') {
 		paddles[1].active = -1;
 	}
@@ -244,7 +244,7 @@ addEventListener("keydown", (e) => {
 });
 
 addEventListener("keyup", (e) => {
-	if((!gameReady) || isTouchscreen()) return;
+	if((!gameReady) || isTouchScreen()) return;
 	if(e.key == 'ArrowUp') {
 		paddles[1].active =  0;
 	}
@@ -261,7 +261,7 @@ addEventListener("keyup", (e) => {
 
 function logic() {
 	// extra mobile/touchscreen input detection, also leave paddle 2 to ai in this case
-	if (isTouchscreen()) {
+	if (isTouchScreen()) {
 		if(Math.abs(paddles[0].y - mouseY) < paddleSpeed) {
 			paddles[0].active = (paddles[0].y - mouseY < 0) ? -1 : 1;
 		}
