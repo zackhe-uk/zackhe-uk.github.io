@@ -221,10 +221,12 @@ function isTouchScreen() {
 }
 addEventListener("click", (e) => {
 	document.getElementById("defaultCanvas0").requestFullscreen();
-	setTimeout(() => {
-		// wait 300ms for fullscreen to finish fullscreening
-		document.getElementById("defaultCanvas0").requestPointerLock();
-	}, 300);
+	if(!isTouchScreen()) {
+		setTimeout(() => {
+			// wait 300ms for fullscreen to finish fullscreening
+			document.getElementById("defaultCanvas0").requestPointerLock();
+		}, 300);
+	}
 	if(!gameReady) realsetup();
 });
 addEventListener("keydown", (e) => {
