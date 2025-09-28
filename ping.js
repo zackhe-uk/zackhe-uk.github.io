@@ -264,9 +264,13 @@ function logic() {
 	if (isTouchScreen()) {
 		if(Math.abs(paddles[0].y - mouseY) < paddleSpeed) {
 			paddles[0].active = (paddles[0].y - mouseY < 0) ? -1 : 1;
+		} else {
+			paddles[0].active = 0;
 		}
 		if(Math.abs(paddles[1].y - ball.y) < paddleSpeed) {
 			paddles[1].active = (paddles[1].y - ball.y < 0) ? -1 : 1;
+		} else {
+			paddles[1].active = 0;
 		}
 	}
 
