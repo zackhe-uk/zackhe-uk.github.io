@@ -193,7 +193,7 @@ function blip(osctype, oscfreq, time) {
 function reconfigBall() {
 	ball.exists  = true;
 	ball.x       = width/2;
-	ball.y 			 = (Math.random() < 0.5) ? ballGap : height - ballGap; // ??? emulating weird pong quirk?
+	ball.y 		 = (Math.random() < 0.5) ? ballGap : height - ballGap; // ??? emulating weird pong quirk?
 	ball.xs      = ballFirstXS;
 	ball.ys      = (ball.y == ballGap) ? ballFirstYS : -ballFirstYS;
 	ball.sm      = 1;
