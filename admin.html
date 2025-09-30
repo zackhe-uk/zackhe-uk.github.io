@@ -1,0 +1,154 @@
+<!doctype HTML>
+<html>
+  <head>
+    <meta name="title" property="og:title" content="Login ADMINISTRATION" />
+    <meta name="description" property="og:description" content="Admin Dashboard panel for zackhe.uk." />
+    <meta property="og:type" content="website" /> 
+    <meta property="og:url" content="https://zackhe.uk/admin" />
+    <title>
+      admin login
+    </title>
+    <script>
+      // for large strings, use this from https://stackoverflow.com/a/49124600
+      const buff_to_base64 = (buff) => btoa(
+        new Uint8Array(buff).reduce(
+          (data, byte) => data + String.fromCharCode(byte), ''
+        )
+      );
+      
+      const base64_to_buf = (b64) =>
+        Uint8Array.from(atob(b64), (c) => c.charCodeAt(null));
+      
+      const enc = new TextEncoder();
+      const dec = new TextDecoder();
+      
+      
+      const getPasswordKey = (password) =>
+        window.crypto.subtle.importKey("raw", enc.encode(password), "PBKDF2", false, [
+          "deriveKey",
+        ]);
+      
+      const deriveKey = (passwordKey, salt, keyUsage) =>
+        window.crypto.subtle.deriveKey(
+          {
+            name: "PBKDF2",
+            salt: salt,
+            iterations: 250000,
+            hash: "SHA-512",
+          },
+          passwordKey,
+          { name: "AES-GCM", length: 256 },
+          false,
+          keyUsage
+        );
+      
+      async function encryptData(secretData, password) {
+        try {
+          const salt = window.crypto.getRandomValues(new Uint8Array(16));
+          const iv = window.crypto.getRandomValues(new Uint8Array(12));
+          const passwordKey = await getPasswordKey(password);
+          const aesKey = await deriveKey(passwordKey, salt, ["encrypt"]);
+          const encryptedContent = await window.crypto.subtle.encrypt(
+            {
+              name: "AES-GCM",
+              iv: iv,
+            },
+            aesKey,
+            enc.encode(secretData)
+          );
+      
+          const encryptedContentArr = new Uint8Array(encryptedContent);
+          let buff = new Uint8Array(
+            salt.byteLength + iv.byteLength + encryptedContentArr.byteLength
+          );
+          buff.set(salt, 0);
+          buff.set(iv, salt.byteLength);
+          buff.set(encryptedContentArr, salt.byteLength + iv.byteLength);
+          const base64Buff = buff_to_base64(buff);
+          return base64Buff;
+        } catch (e) {
+          console.log(`Error - ${e}`);
+          return "";
+        }
+      }
+      
+      async function decryptData(encryptedData, password) {
+        try {
+          const encryptedDataBuff = base64_to_buf(encryptedData);
+          const salt = encryptedDataBuff.slice(0, 16);
+          const iv = encryptedDataBuff.slice(16, 16 + 12);
+          const data = encryptedDataBuff.slice(16 + 12);
+          const passwordKey = await getPasswordKey(password);
+          const aesKey = await deriveKey(passwordKey, salt, ["decrypt"]);
+          const decryptedContent = await window.crypto.subtle.decrypt(
+            {
+              name: "AES-GCM",
+              iv: iv,
+            },
+            aesKey,
+            data
+          );
+          return dec.decode(decryptedContent);
+        } catch (e) {
+          console.log(`Error - ${e}`);
+          return "";
+        }
+      }
+
+    </script>
+    <style>
+      .mainCont {
+        display: block;
+        width: 100%;
+        text-align: center;
+      }
+      .prfCont {
+        display: inline-block;
+        text-align: right;
+      }
+      .pref {
+        padding: 3px 0;
+      }
+      #loginBtn {
+        position: relative;
+        top: 10px;
+      }
+    </style>
+    <script>
+      window.secret = "JfZrdzu8lfpb/7bI1B7tYWkvF9HPPN6LbwnlKwrNrm1YrzqZHpYFg5Hq6Ha8oK1C9eO8hsKkTjjsk81yucK0nb+5RkZZ6Tvn57YQeiP4xQXI32uBeXoz6iEtSaWKv7T2WFn/b+YXzd++QL80+GjbrMuBa5cStLIuGoKQZ7ufmrdrrbKqGCI8tcglpevRIOESryopotfg9d88fYqOoHEuYDTq6fY9vQajcmgs/t2XZddlKoEJAaV1iG+u+14hBW0SdXda9n/63YpPg4fG6/ncAOTJfgC6fEOTCzBROzt24GIn0NSJw7ZUI8GJ9jI+tF2Wu6m0vyTMhgbb29tT/h6jbuWca8k5x+MZue3XEvB3juOCbd7kaBR0EP9xar3vAiXrH8ofh0JLaGXb82J1QTSyAC1sScxBVwVwGL7OrvCTb475QxZV3qVgU6beQsfzqPach0LglOT13pjhmicMFc8wvvaZy/ZLc2a0TfXDd5PwHwhDiOqgPUfM4m96qrHQmEuTUCCNiyMtGOV2dyYgg099fBnLdE2d1HCzab8+CFQ/jNlsijlLWKSYKHfPja5emxAQu9IKJE3Ss7cpmklOe/YqRE0hYg+uAFgol35R05qETdnKwBoyHipvligsmkorChs5vjUFKRfHZbyWq1f7SDYddkSjyOvihKHqToCnmIepBUkb4DqiO796HvMgs6JSX0gp/gHv7v9Wci9I9LLas1Qc8ZqFlZsJ4jE2itSXrLjgzUve5LWT9v+8yGTjRa3hz2UwoQJWKZxytHIrus0C6D6+8o5fmyQJPsrkNp6c16ecBxULBX2p/eELXkGB2+d4EEu8lKFbKSjb";
+      
+      window.onload = () => {
+        document.getElementById("loginBtn").addEventListener("click", () => {
+          if(document.getElementById("username").value == "zack") {
+            try {
+              decryptData(window.secret, document.getElementById("password").value).then((e) => {
+                document.documentElement.innerHTML = e;
+              })
+            } catch(e) {
+              window.open("https://zackhe.uk/beans");
+            }
+          } else {
+            window.open("https://zackhe.uk/beans");
+          }
+        });
+      };
+    </script>
+  </head>
+  <body>
+    <div class="mainCont">
+      <h1>Login</h1>
+      <div class="prfCont">
+        <div class="pref">
+          <label for="username">Username</label>
+          <input type="text" name="username" id="username"/>
+        </div>
+        <div class="pref">
+          <label for="password">Password</label>
+          <input type="password" name="password" id="password"/>
+        </div>
+      </div><br>
+      <button id="loginBtn">Login</button>
+    </div>
+    
+  </body>
+</html>
