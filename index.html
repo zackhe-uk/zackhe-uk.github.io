@@ -28,10 +28,18 @@
         position: relative;
         top: 100px;
       }
+      #epwarn {
+        padding: 100px 0px;
+        text-align: center;
+        background: red;
+        color: white;
+        font-family: monospace;
+      }
       table {
         display: inline-block;
         border-collapse: collapse;
         border: 2px solid #909090;
+        background: lightgray;
         font-family: sans-serif;
         letter-spacing: 1px;
       }
@@ -65,6 +73,17 @@
             </tr>
           </tbody>
         </table>
+      </div>
+      <div id="epwarn">
+        <h1>WARNING OF FORMALITY</h1>
+        <br>
+        <br>
+        This website contains elements which may<br>
+        disturb photosensitive viewers.<br>
+        <br>
+        It isn't too late to turn back.<br>
+        <br>
+        <a href="javascript:document.getElementById('epwarn').remove()">Click to dismiss</a>
       </div>
     </div>
   </body>
