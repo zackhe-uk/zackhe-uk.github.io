@@ -1,0 +1,50 @@
+<!doctype HTML>
+<html>
+  <head>
+    <title>
+      Sitemap
+    </title>
+    <meta name="title" property="og:title"             content="Sitemap" />
+    <meta name="description" property="og:description" content="Welcome to zackhe.uk\n\nREMAINING: 0SECOND" />
+    <meta property="og:type" content="website" /> 
+    <meta property="og:url" content="https://zackhe.uk/sitemap" />
+    <script>
+      // generate sitemap
+      async function grabTitle(site)
+      {
+      	return fetch(site).then(req => { return req.text(); }).then(reqTxt => {
+      		const parser = new DOMParser();
+      		const doc = parser.parseFromString(reqTxt, "text/html");
+      		return doc.getElementsByTagName("title")[0].innerText.split('\n').join('').trim(); // ew
+      	});
+      }
+      
+      fetch("https://zackhe.uk/sitemap.xml").then(req => { return req.text(); }).then(reqTxt => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(reqTxt, "text/xml");
+        [...doc.children[0].children].forEach(child => {
+          let pageUrl = [...child.children].filter(a => (a.nodeName == "loc"))[0].innerHTML;
+          grabTitle(pageUrl).then(title => {
+            let aLink = document.createElement("a");
+            aLink.setAttribute("target", "_blank");
+            aLink.href = pageUrl;
+            aLink.innerText = `${title}`;
+            let liElem = document.createElement("li");
+            liElem.appendChild(aLink);
+            document.getElementById("tableOfLink").appendChild(liElem);
+          });
+      	});
+      });
+    </script>
+  </head>
+  <body style="position: relative; left: 30px;">
+    <h1>
+      Sitemap
+    </h1>
+    <p>
+      <ul id="tableOfLink">
+        
+      </ul>
+    </p>
+  </body>
+</html>
