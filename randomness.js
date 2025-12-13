@@ -53,12 +53,12 @@ function setup() {
 
 	document.getElementsByTagName("canvas")[0].style.top            =
 	document.getElementsByTagName("canvas")[0].style.left           = "0px";
-
-	document.getElementsByTagName("canvas")[0].style.width          =
-	document.getElementsByTagName("canvas")[0].style.height         = "100%";
 }
 
 function draw() {
+	document.getElementsByTagName("canvas")[0].style.width          =
+	document.getElementsByTagName("canvas")[0].style.height         = "100%";
+
 	for(let x = 0; x < width; x++)
 	{
 		for(let y = 0; y < height; y++)
